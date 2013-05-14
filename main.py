@@ -1,27 +1,30 @@
-from variable import Variable
-from fuzzyengine import FuzzyEngine
-from fuzzyrule import FuzzyRule
-from membershipfunction import MembershipFunction
+# -*- encoding: utf-8 -*-
 
-water = Variable("water")
-water.membershipFunctions["Cold"] = MembershipFunction("Cold", 0, 0, 20, 40)
-water.membershipFunctions["Tepid"] = MembershipFunction("Tepid", 30, 50, 50, 70)
-water.membershipFunctions["Hot"] = MembershipFunction("Hot", 50, 80, 100, 100)
+from lib.fuzzy.variable import Variable
+from lib.fuzzy.fuzzyengine import FuzzyEngine
+from lib.fuzzy.fuzzyrule import FuzzyRule
+from lib.fuzzy.membershipfunction import MembershipFunction
 
-power = Variable("Power")
-power.membershipFunctions["Low"] = MembershipFunction("Low", 0, 25, 25, 50)
-power.membershipFunctions["High"] = MembershipFunction("High", 25, 50, 50, 75)
+request = Variable("Request")
+request.membershipFunctions["Low"] = MembershipFunction("Low", 0, 0, 25, 50)
+request.membershipFunctions["Middle"] = MembershipFunction("Middle", 20, 40, 75, 100)
+request.membershipFunctions["High"] = MembershipFunction("Hot", 75, 100, 150, 1000)
+
+degree = Variable("Degree")
+degree.membershipFunctions["Low"] = MembershipFunction("Low", 0, 0, 5, 25)
+degree.membershipFunctions["Middle"] = MembershipFunction("Middle", 25, 45, 55, 75)
+degree.membershipFunctions["High"] = MembershipFunction("High", 75, 95, 100, 100)
+
 fe = FuzzyEngine()
-fe.variables["Water"] = water
-fe.variables["Power"] = power
+fe.variables["Request"] = request
+fe.variables["Degree"] = degree
 
-fe.calculatedVariable = power
+fe.calculatedVariable = degree
 
-fe.fuzzyRules.append(FuzzyRule("IF (Water IS Cold) OR (Water IS Tepid) THEN Power IS High"))
-fe.fuzzyRules.append(FuzzyRule("IF (Water IS Hot) THEN Power IS Low"))
+fe.fuzzyRules.append(FuzzyRule("IF (Request IS Low) THEN Degree IS Low"))
+fe.fuzzyRules.append(FuzzyRule("IF (Request IS Middle) THEN Degree IS Middle"))
+fe.fuzzyRules.append(FuzzyRule("IF (Request IS High) THEN Degree IS High"))
 
-water.inputValue = 60
+request.inputValue = 1.38129512476
 
 print fe.defuzzify()
-
-

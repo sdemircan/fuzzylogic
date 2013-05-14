@@ -8,8 +8,10 @@ import re
 #import third party modules
 import tailer
 from logsparser import lognormalizer
-
+from threading import Timer, Thread
 import datetime
+import time
+
 class Pattern:
     def __init__(self, program):
         if (program == "apache"):
@@ -33,23 +35,36 @@ class Pattern:
         return pattern
 
 
-class Parser:
+class Parser(Thread):
     def __init__(self, log_path):
-         
+        super(Parser, self).__init__()
+        self.hosts = {}    
         self.parserFile = log_path
         self.lognorm = lognormalizer.LogNormalizer('/home/serhat/İndirilenler/pylogsparser-0.8/normalizers')
 
     def parse(self, logline):
         log = {'raw' : logline}
+        startTime = time.time()
         self.lognorm.lognormalize(log)
         
         self.pattern = Pattern("apache")
         #apache_line = log['raw'].split(":",3)[-1].lstrip()
         matched = self.pattern.pattern.match(log['raw'])
         if matched:
-            log['information'] = matched.groupdict()
+            information = matched.groupdict()
+            if self.hosts.has_key(information['host']):
+                self.hosts[information['host']]['count'] += 1
+                self.hosts[information['host']]['lastUpdated'] = startTime
+            else:
+                self.hosts[information['host']] = {}
+                self.hosts[information['host']]['count'] = 1
+                self.hosts[information['host']]['startTime'] = startTime
+                self.hosts[information['host']]['lastUpdated'] = startTime
+   
+    def getHosts(self):
+        return hosts
 
-    def start(self):
+    def run(self):
         for logline in tailer.follow(open(self.parserFile)):
             self.parse(logline)
 
