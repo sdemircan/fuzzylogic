@@ -7,10 +7,12 @@ from widgets import MainWidget
 from parser import Parser
 import time
 from lib.utils.mail import sendInformationMail
+from lib.utils.firewall import dropIncomingPacketsFromHost
 from lib.fuzzy.variable import Variable
 from lib.fuzzy.fuzzyengine import FuzzyEngine
 from lib.fuzzy.fuzzyrule import FuzzyRule
 from lib.fuzzy.membershipfunction import MembershipFunction
+
 
 class MainWindow(QtGui.QMainWindow):
     
@@ -80,6 +82,8 @@ class MainWindow(QtGui.QMainWindow):
 
             if result > 75 and result <=100:
                 if not host in self.blockedHosts:
+                    #uncomment this line to block host
+                    #dropIncomingPacketsFromHost(host) 
                     self.blockedHosts.append(host)
                     pass
                 else:
