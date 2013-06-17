@@ -76,7 +76,7 @@ class MainWindow(QtGui.QMainWindow):
                 elif host in self.informedHosts:
                     status = "Informed"
                 elif not host in self.informedHosts:
-                    sendInformationMail(host)
+                    #sendInformationMail(host)
                     self.informedHosts.append(host)
                     status = "Informed"
 

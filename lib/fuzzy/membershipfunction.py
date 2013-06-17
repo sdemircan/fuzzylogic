@@ -19,4 +19,3 @@ class MembershipFunction:
         b = self.X3 - self.X0;
 
         return (self.value * (b + (b - (a * self.value)))) / 2;
-        
